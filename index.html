@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Music</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Georgia, serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+      color: #f0c060;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #aaa;
+      margin-bottom: 30px;
+    }
+
+    /* Now Playing */
+    .now-playing {
+      background: #16213e;
+      border: 2px solid #f0c060;
+      border-radius: 16px;
+      padding: 24px 30px;
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .now-playing-label {
+      font-size: 0.85rem;
+      color: #f0c060;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .now-playing-title {
+      font-size: 1.6rem;
+      font-weight: bold;
+      margin-bottom: 18px;
+      min-height: 2rem;
+      color: #fff;
+    }
+
+    audio {
+      width: 100%;
+      height: 54px;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    /* Playlist */
+    .playlist {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .song-btn {
+      background: #16213e;
+      border: 2px solid #333a5c;
+      border-radius: 12px;
+      padding: 16px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.2s;
+      text-align: left;
+      color: #eee;
+      font-family: Georgia, serif;
+      font-size: 1.15rem;
+      width: 100%;
+    }
+
+    .song-btn:hover {
+      background: #0f3460;
+      border-color: #f0c060;
+      transform: scale(1.01);
+    }
+
+    .song-btn.active {
+      background: #0f3460;
+      border-color: #f0c060;
+      color: #f0c060;
+    }
+
+    .song-num {
+      font-size: 1rem;
+      color: #888;
+      min-width: 28px;
+      text-align: center;
+    }
+
+    .song-btn.active .song-num {
+      color: #f0c060;
+    }
+
+    .note-icon {
+      font-size: 1.4rem;
+    }
+
+    .song-name {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎵 My Music</h1>
+  <p class="subtitle">Click any song to play it</p>
+
+  <div class="now-playing">
+    <div class="now-playing-label">▶ Now Playing</div>
+    <div class="now-playing-title" id="now-playing-title">— Select a song —</div>
+    <audio id="player" controls></audio>
+  </div>
+
+  <div class="playlist" id="playlist"></div>
+
+  <script>
+    // ============================================================
+    // 🎵 EDIT YOUR SONGS HERE
+    // Put the MP3 filename and the song name for each track.
+    // The file should be in the same folder as this HTML file.
+    // ============================================================
+    const songs = [
+      { file: "song01.mp3", name: "Song Title One" },
+      { file: "song02.mp3", name: "Song Title Two" },
+      { file: "song03.mp3", name: "Song Title Three" },
+      { file: "song04.mp3", name: "Song Title Four" },
+      { file: "song05.mp3", name: "Song Title Five" },
+      { file: "song06.mp3", name: "Song Title Six" },
+      { file: "song07.mp3", name: "Song Title Seven" },
+      { file: "song08.mp3", name: "Song Title Eight" },
+      { file: "song09.mp3", name: "Song Title Nine" },
+      { file: "song10.mp3", name: "Song Title Ten" },
+    ];
+    // ============================================================
+
+    const player = document.getElementById("player");
+    const nowPlaying = document.getElementById("now-playing-title");
+    const playlist = document.getElementById("playlist");
+    let currentIndex = -1;
+
+    function playSong(i) {
+      currentIndex = i;
+      const song = songs[i];
+      player.src = song.file;
+      player.play();
+      nowPlaying.textContent = song.name;
+      document.querySelectorAll(".song-btn").forEach((btn, idx) => {
+        btn.classList.toggle("active", idx === i);
+      });
+    }
+
+    // Auto-play next song
+    player.addEventListener("ended", () => {
+      const next = (currentIndex + 1) % songs.length;
+      playSong(next);
+    });
+
+    // Build playlist buttons
+    songs.forEach((song, i) => {
+      const btn = document.createElement("button");
+      btn.className = "song-btn";
+      btn.innerHTML = `
+        <span class="song-num">${i + 1}</span>
+        <span class="note-icon">🎵</span>
+        <span class="song-name">${song.name}</span>
+      `;
+      btn.onclick = () => playSong(i);
+      playlist.appendChild(btn);
+    });
+  </script>
+</body>
+</html>
